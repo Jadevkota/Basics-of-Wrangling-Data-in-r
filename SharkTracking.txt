@@ -1,11 +1,11 @@
 Name|Gender|StageOfLife|Length|Weight|TagLocation
-Caroline|Female|SubAdult|3.89|611.44|"Hilton Head| SC"
-Bluenose|Male|SubAdult|3.53|344.3|"Lunenburg| Nova Scotia"
-Brunswick|Male|SubAdult|NA|NA|NA
+Caroline|Female|SubAdult|3.89|611.44|"Hilton Head, SC"
+Bluenose|Male|SubAdult|3.53|344.3|"Lunenburg, Nova Scotia"
+Brunswick|Male|SubAdult|NA|NA|NA| Nepal
 Breton|Male|Adult|4.04|651.81|Scatarie Island
 Cabot|Male|SubAdult|NA|NA|NA
 Teazer|Male|SubAdult|3.22|295.29|"Lunenburg| Nova Scotia"
-Unama'ki|Female|Adult|4.7|941.66|Scatarie Island
+Unama'ki|Female|Adult|4.7|941.66|Scatarie Island|USA
 Andromache|Female|SubAdult|3.25|NA|NA
 Beacon|Male|Juvenile|2.62|144.3|Cape Cod
 Vimy|Male|Adult|3.89|527.98|"Lunenburg| Nova Scotia"
