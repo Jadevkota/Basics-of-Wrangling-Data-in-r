@@ -1,0 +1,378 @@
+---
+title: " Basics of Wrangling Data in r the tidyverse, janitor & base r"
+author: "JDevkota"
+date: '2022-07-08'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+install.packages("tidyverse", "janitor")
+library(tidyverse, janitor)
+```
+
+```{r}
+population <- as_tibble(population) # load the population data (World Health Organization TB data) available in r studio
+```
+
+# glimpse() - get an overview of what’s included in dataset
+
+```{r}
+## take a look at the data
+glimpse(population) # It will show number of rows and columns as well as the type of data e.g chr: character, int:intiger etc.
+```
+
+# dim()- get dimention of the dataset
+```{r}
+dim(population) # It will print number rows and columns
+```
+ 
+ 
+# head() - get fist few rows including the columns names
+```{r}
+head(population)
+```
+
+# tail() - get last few rows including the columns names
+```{r}
+tail(population)
+```
+
+# filter() - filter rows
+```{r}
+# filter to only include primates
+population %>%  # forward-pipe operator
+  filter(year == "2001")
+```
+
+
+```{r}
+population %>%
+  filter(year == "2005", population < 10000) # use of coma in filter 
+```
+
+
+```{r}
+population %>%
+  filter(year == "2005" & population < 10000) # use of & condition in filter 
+```
+
+
+```{r}
+population %>%
+  filter(year == "2005" | population < 10000) # Use the pipe (|) character for "OR" conditions
+```
+
+# select() - select, rename, and reorder columns
+```{r}
+population %>%
+  filter(country == "Nepal" & population > 10000) %>% # Use greater than sigh to filter the population
+  select(year, population) # Select command use to select the specific columns of dataset
+```
+
+# The - operator will remove a variable from a result set.
+```{r}
+population %>% 
+  select(-country) # Return all variables with the exception of country
+```
+
+# rename() - rename columns
+```{r}
+population %>%
+  filter(country == "Nepal" & population > 10000) %>%
+  select(year, Nations = country, Population =  population) # Select and rename the columns 
+```
+
+# Use grepl() - in combination with filter for pattern-matching conditions.
+```{r}
+population %>%
+  filter(grepl("^19.", year)) # grepl allows to select all year starting with 19 
+```
+
+# starts_with() - allows us to identify variables whose name begins with a string
+```{r}
+population %>% 
+  select(starts_with("y")) # Returns all variables that begin with the letter "N"
+```
+
+```{r}
+population %>% 
+  select(starts_with("y", ignore.case = F)) # Set ignore.case parameter to FALSE for strict casing
+```
+# ends_with() - allows us to identify variables whose name end with a string
+```{r}
+population %>% 
+  select(ends_with("n")) # Return all variables that end with the letter "n"
+```
+
+# Return all rows where year is between 2000 and 2010
+```{r}
+population %>% 
+  dplyr::filter(between(year, 2000, 2010)) # It allow us to filter dataset between 
+```
+
+# slice() - returns only rows by the given index.
+```{r}
+population %>%
+  slice(1:10) # Return the first 10 rows of dataset (same as the base head function)
+```
+
+
+```{r}
+population %>% 
+  dplyr::slice(c(1, 100, 1000, 2000, 2349)) # Return the 1st, 100th, 1000th, 2000th and 2349th rows of dataset
+```
+
+
+```{r}
+population %>% 
+  slice(c(1, nrow(population))) # Return the first and last rows
+```
+
+# arrange() - reorder rows
+```{r}
+population %>%
+  filter(year == "2005" & population < 10000) %>%
+  select(year, Nations = country, Population =  population)%>% # rename variables
+  arrange(Population) # Rearrange the rpws of dataset
+```
+
+# Data arranged by total Population in ascending order
+```{r}
+population %>%
+  filter(year == "2005" & population < 10000) %>%
+  select(year, Nations = country,Population =  population)%>%
+  arrange(desc(Population))
+```
+
+# arrange() will sort character vectors alphabetically.
+```{r}
+population %>%
+  filter(year == "2001" & population > 10000) %>%
+  select(year, Nations = country,Population =  population)%>%
+  arrange(Nations)
+```
+
+# Data arranged alphabetically by Nations
+```{r}
+population %>%
+  filter(year == "2001" & population > 10000) %>%
+  select(year, Nations = country,Population =  population)%>%
+  arrange(Nations,Population)
+```
+
+# mutate() - create a new column
+```{r}
+population %>%
+  filter(year == "2001" & population > 10000) %>%
+  select(year, Nations = country,Population =  population)%>%
+  arrange(Nations) %>%
+  mutate(Population_ten_times = Population * 10)
+```
+ 
+# group_by() - group variables
+```{r}
+population %>%
+  group_by(year)
+```
+
+# summarize() - summarize information within a dataset
+```{r}
+population %>%
+# here we select the column called population, any column would work
+  select(population) %>%
+  summarize(N=n())
+```
+
+```{r}
+population %>%
+# here we select the column called year, any column would work
+  select(year) %>%
+  summarize(N=n())
+```
+
+# Use group_by() and select() then use summarize()
+```{r}
+population %>%
+  group_by(country) %>% 
+  select(year) %>%
+  summarize(N=n()) # This will summarize within group.
+```
+
+# Summarize data using summarize(), n() to count the number of samples within a group & mean(), median(), sd(), min(), and max()
+```{r}
+population %>%
+  group_by(year) %>% 
+  select(year, population) %>%
+  summarize(N=n(), mean_population = mean(population), median_population = median(population), sd_population = sd(population), min_population = min(population), max_population = max(population))
+```
+
+# tabyl() - summarizing categorical variables quickly
+
+```{r}
+population %>%
+  tabyl(population)
+```
+
+# summary() - will summarize numeric variables
+```{r}
+summary(population$population)
+```
+
+# tally() function to get the total number of samples in a tibble or the total number of rows very simply
+```{r}
+population %>%
+  tally()
+```
+
+# tally() - can also use to get a sum of the values of a column (if the values are numeric).
+```{r}
+population %>%
+tally(population)
+```
+
+# Use sum() - function with the summarize() function
+```{r}
+population %>%
+  summarize(sum_populationl = sum(population))
+```
+
+# pull() - function pulls or extracts the values from a variable
+```{r}
+population %>%
+pull(population)%>%
+  sum()
+```
+
+# add_tally() - can quickly add our tally values to our tibble
+```{r}
+population %>%
+  add_tally() %>%
+  glimpse()
+```
+
+# add_tally() -  can add a column that repeats
+```{r}
+population %>%
+  add_tally(population) %>%
+  glimpse()
+```
+
+
+# count() function takes the tally() function a step further to determine the count of unique values for specified variable(s)/column(s).
+```{r}
+population %>%
+  count(country)
+```
+
+# Use group_by() with tally()
+```{r}
+population %>%
+  group_by(country) %>%
+  tally()
+```
+
+# Multiple variables can be specified with count().
+```{r}
+population %>%
+  count(country, year) # This can be really useful when getting to know your data.
+```
+
+# add_count() - function is similar to the add_tally() function.
+```{r}
+population %>%
+  add_count(country, year) %>%
+  glimpse()
+```
+
+# get_dupes() - function will count the presence of the of duplicate entries
+```{r}
+# identify observations that match in both country and population
+population %>%
+  get_dupes(country, population)
+```
+
+# Select Columns by index number
+```{r}
+who <- as_tibble(who) # Load World Health Organization TB data who 
+who <- select(who, c(1:10)) %>% # By index with sequences
+  janitor::remove_empty(c("rows","cols")) # remove the entirely empty rows and columns
+```
+
+# Remove Rows with NA Values in One Specific Column
+```{r}
+who <- who %>%
+  filter(!is.na(new_sp_m014))
+```
+
+# Use the drop_na () function to drop missing rows
+```{r}
+who %>% 
+  drop_na() 
+```
+
+# across() function is needed to operate across the columns of a data frame 
+```{r}
+who %>%
+  summarize(across(new_sp_m014:new_sp_m5564, mean, na.rm = TRUE))
+```
+
+# The across() function can also be used with mutate() if we want to apply the same transformation to multiple columns. For example, suppose we want to cycle through each column and replace all missing values (NAs) with zeros. We could use across() to accomplish this.
+```{r}
+who %>%
+  summarize(across(new_sp_m014:new_sp_m5564, ~ replace_na(., 0)))
+```
+
+# sort country name, R would sort this vector alphabetically
+```{r}
+who %>%
+  sort(country)
+```
+
+# left_join() - combine data across data frame
+
+# left_join(): includes all rows in x.
+# right_join(): includes all rows in y.
+# full_join(): includes all rows in x or y.
+# inner_join(): includes all rows in x and y.
+```{r}
+who %>%
+  left_join(
+  who,
+  population,
+  by = "year",
+  copy = FALSE,
+  suffix = c(".x", ".y"),
+  keep = FALSE
+)
+```
+
+# References 
+```{r}
+citation("tidyverse")
+```
+
+
+```{r}
+citation("janitor")
+```
+
+
+```{r}
+citation()
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
